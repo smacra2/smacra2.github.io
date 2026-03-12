@@ -1,68 +1,85 @@
-let cards = [...decks.conditions, ...decks.drugs];
-
-let current = 0;
-let time = 60;
-let timerInterval;
-
-shuffle(cards);
+let cards=[]
+let current=0
+let score=0
+let time=60
+let timer
 
 function startGame(){
 
-document.getElementById("menu").classList.add("hidden");
-document.getElementById("game").classList.remove("hidden");
+const category=document.getElementById("category").value
 
-showCard();
+cards=[...decks[category]]
 
-timerInterval = setInterval(updateTimer,1000);
+shuffle(cards)
+
+document.getElementById("menu").classList.add("hidden")
+document.getElementById("game").classList.remove("hidden")
+
+showCard()
+
+timer=setInterval(updateTimer,1000)
+
+enableTilt()
 
 }
 
 function showCard(){
 
-document.getElementById("term").textContent = cards[current];
+document.getElementById("term").textContent=cards[current]
 
 }
 
 function correct(){
 
-current++;
-nextCard();
+score++
+current++
+
+updateScore()
+
+next()
 
 }
 
 function pass(){
 
-current++;
-nextCard();
+current++
+
+next()
 
 }
 
-function nextCard(){
+function next(){
 
-if(current >= cards.length){
+if(current>=cards.length){
 
-shuffle(cards);
-current = 0;
+shuffle(cards)
+current=0
 
 }
 
-showCard();
+showCard()
+
+}
+
+function updateScore(){
+
+document.getElementById("score").textContent=score
 
 }
 
 function updateTimer(){
 
-time--;
+time--
 
-document.getElementById("timer").textContent = time;
+document.getElementById("timer").textContent=time
 
-if(time <= 0){
+if(time<=0){
 
-clearInterval(timerInterval);
+clearInterval(timer)
 
-alert("Time's up!");
+alert("Final Score: "+score)
 
-location.reload();
+location.reload()
 
 }
 
@@ -70,11 +87,36 @@ location.reload();
 
 function shuffle(array){
 
-for (let i = array.length - 1; i > 0; i--) {
+for(let i=array.length-1;i>0;i--){
 
-const j = Math.floor(Math.random() * (i + 1));
+const j=Math.floor(Math.random()*(i+1))
 
-[array[i], array[j]] = [array[j], array[i]];
+[array[i],array[j]]=[array[j],array[i]]
+
+}
+
+}
+
+function studyMode(){
+
+const category=document.getElementById("category").value
+
+cards=[...decks[category]]
+
+let index=0
+
+document.getElementById("menu").classList.add("hidden")
+document.getElementById("game").classList.remove("hidden")
+
+document.getElementById("term").textContent=cards[index]
+
+document.onclick=function(){
+
+index++
+
+if(index>=cards.length) index=0
+
+document.getElementById("term").textContent=cards[index]
 
 }
 

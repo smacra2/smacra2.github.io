@@ -4,8 +4,7 @@
 <head>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>MedHeads</title>
+<title>Medical Heads Up!</title>
 
 <link rel="stylesheet" href="style.css">
 
@@ -15,11 +14,22 @@
 
 <div class="container">
 
-<h1>MedHeads</h1>
+<h1>Medical Heads Up!</h1>
 
 <div id="menu">
 
-<button class="start" onclick="startGame()">Start Game</button>
+<select id="category">
+<option value="diagnoses">Diagnoses</option>
+<option value="microbiology">Microbiology</option>
+<option value="antibiotics">Antibiotics</option>
+<option value="anatomy">Anatomy</option>
+<option value="clinical_signs">Clinical Signs</option>
+<option value="imaging">Imaging</option>
+</select>
+
+<button onclick="startGame()">Start Game</button>
+
+<button onclick="studyMode()">Study Mode</button>
 
 </div>
 
@@ -27,21 +37,21 @@
 
 <h2 id="term"></h2>
 
-<div>
+<div class="buttons">
 
-<button class="correct" onclick="correct()">Correct</button>
-
-<button class="pass" onclick="pass()">Pass</button>
-
-</div>
-
-<p class="timer">Time: <span id="timer">60</span></p>
+<button onclick="correct()">Correct</button>
+<button onclick="pass()">Pass</button>
 
 </div>
 
+<p>Score: <span id="score">0</span></p>
+<p>Time: <span id="timer">60</span></p>
+
 </div>
 
-<script src="terms.js"></script>
+</div>
+
+<script src="deck.js"></script>
 <script src="script.js"></script>
 
 </body>
