@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MedHeads</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>MedHeads</h1>
+
+<div id="menu">
+
+<button class="start" onclick="startGame()">Start Game</button>
+
+</div>
+
+<div id="game" class="hidden">
+
+<h2 id="term"></h2>
+
+<div>
+
+<button class="correct" onclick="correct()">Correct</button>
+
+<button class="pass" onclick="pass()">Pass</button>
+
+</div>
+
+<p class="timer">Time: <span id="timer">60</span></p>
+
+</div>
+
+</div>
+
+<script src="terms.js"></script>
+<script src="script.js"></script>
+
+</body>
+
+</html>
