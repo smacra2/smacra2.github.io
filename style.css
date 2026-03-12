@@ -1,9 +1,9 @@
-body {
 
-font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-margin:0;
+body{
+font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto;
 background:#0f172a;
 color:white;
+margin:0;
 text-align:center;
 }
 
@@ -12,48 +12,40 @@ padding:20px;
 }
 
 h1{
-font-size:28px;
 margin-top:30px;
 }
 
-#term{
-font-size:42px;
+#card{
 margin-top:120px;
+font-size:40px;
 padding:20px;
 }
 
-button{
-
+select,button{
 width:80%;
-max-width:300px;
-
-padding:18px;
+max-width:320px;
+padding:16px;
 margin:10px;
-
 font-size:18px;
+border-radius:10px;
 border:none;
-border-radius:12px;
-
 }
 
-.start{
-background:#22c55e;
+button{
+background:#2563eb;
 color:white;
 }
 
 .correct{
 background:#16a34a;
-color:white;
 }
 
 .pass{
-background:#ef4444;
-color:white;
+background:#dc2626;
 }
 
-.timer{
-font-size:22px;
-margin-top:40px;
+.buttons{
+margin-top:30px;
 }
 
 .hidden{

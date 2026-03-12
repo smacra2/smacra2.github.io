@@ -1,22 +1,21 @@
+
 <!DOCTYPE html>
 <html>
-
 <head>
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Medical Heads Up!</title>
-
+<title>MedHeads</title>
 <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
 
 <div class="container">
 
-<h1>Medical Heads Up!</h1>
+<h1>MedHeads</h1>
 
 <div id="menu">
+
+<label>Select Category</label>
 
 <select id="category">
 <option value="diagnoses">Diagnoses</option>
@@ -28,20 +27,19 @@
 </select>
 
 <button onclick="startGame()">Start Game</button>
-
 <button onclick="studyMode()">Study Mode</button>
 
 </div>
 
 <div id="game" class="hidden">
 
+<div id="card">
 <h2 id="term">Press Start</h2>
+</div>
 
 <div class="buttons">
-
-<button onclick="correct()">Correct</button>
-<button onclick="pass()">Pass</button>
-
+<button class="correct" onclick="correct()">Correct</button>
+<button class="pass" onclick="pass()">Pass</button>
 </div>
 
 <p>Score: <span id="score">0</span></p>
@@ -55,5 +53,4 @@
 <script src="script.js"></script>
 
 </body>
-
 </html>
