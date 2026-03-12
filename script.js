@@ -1,23 +1,36 @@
-let cards=[]
-let current=0
-let score=0
-let time=60
-let timer
+let cards = []
+let current = 0
+let score = 0
+let time = 60
+let timer = null
+let studyIndex = 0
 
-function startGame(){
+function startGame() {
 
-const category=document.getElementById("category").value
+const category = document.getElementById("category").value
 
-cards=[...decks[category]]
+cards = [...decks[category]]
+
+if(cards.length === 0){
+alert("No cards in this category")
+return
+}
 
 shuffle(cards)
+
+current = 0
+score = 0
+time = 60
+
+document.getElementById("score").textContent = score
+document.getElementById("timer").textContent = time
 
 document.getElementById("menu").classList.add("hidden")
 document.getElementById("game").classList.remove("hidden")
 
 showCard()
 
-timer=setInterval(updateTimer,1000)
+timer = setInterval(updateTimer,1000)
 
 enableTilt()
 
@@ -25,7 +38,7 @@ enableTilt()
 
 function showCard(){
 
-document.getElementById("term").textContent=cards[current]
+document.getElementById("term").textContent = cards[current]
 
 }
 
@@ -35,8 +48,7 @@ score++
 current++
 
 updateScore()
-
-next()
+nextCard()
 
 }
 
@@ -44,16 +56,16 @@ function pass(){
 
 current++
 
-next()
+nextCard()
 
 }
 
-function next(){
+function nextCard(){
 
-if(current>=cards.length){
+if(current >= cards.length){
 
 shuffle(cards)
-current=0
+current = 0
 
 }
 
@@ -63,7 +75,7 @@ showCard()
 
 function updateScore(){
 
-document.getElementById("score").textContent=score
+document.getElementById("score").textContent = score
 
 }
 
@@ -71,27 +83,34 @@ function updateTimer(){
 
 time--
 
-document.getElementById("timer").textContent=time
+document.getElementById("timer").textContent = time
 
-if(time<=0){
+if(time <= 0){
 
 clearInterval(timer)
 
-alert("Final Score: "+score)
+alert("Final Score: " + score)
 
-location.reload()
+resetGame()
 
 }
+
+}
+
+function resetGame(){
+
+document.getElementById("menu").classList.remove("hidden")
+document.getElementById("game").classList.add("hidden")
 
 }
 
 function shuffle(array){
 
-for(let i=array.length-1;i>0;i--){
+for (let i = array.length - 1; i > 0; i--) {
 
-const j=Math.floor(Math.random()*(i+1))
+const j = Math.floor(Math.random() * (i + 1))
 
-[array[i],array[j]]=[array[j],array[i]]
+[array[i], array[j]] = [array[j], array[i]]
 
 }
 
@@ -99,25 +118,57 @@ const j=Math.floor(Math.random()*(i+1))
 
 function studyMode(){
 
-const category=document.getElementById("category").value
+const category = document.getElementById("category").value
 
-cards=[...decks[category]]
+cards = [...decks[category]]
 
-let index=0
+if(cards.length === 0){
+alert("No cards available")
+return
+}
+
+studyIndex = 0
 
 document.getElementById("menu").classList.add("hidden")
 document.getElementById("game").classList.remove("hidden")
 
-document.getElementById("term").textContent=cards[index]
+document.getElementById("score").textContent = "-"
+document.getElementById("timer").textContent = "Study"
 
-document.onclick=function(){
+document.getElementById("term").textContent = cards[studyIndex]
 
-index++
+document.onclick = function(){
 
-if(index>=cards.length) index=0
+studyIndex++
 
-document.getElementById("term").textContent=cards[index]
+if(studyIndex >= cards.length){
+studyIndex = 0
+}
+
+document.getElementById("term").textContent = cards[studyIndex]
 
 }
+
+}
+
+function enableTilt(){
+
+if(!window.DeviceOrientationEvent){
+return
+}
+
+window.addEventListener("deviceorientation", function(event){
+
+const tilt = event.beta
+
+if(tilt > 60){
+correct()
+}
+
+if(tilt < -60){
+pass()
+}
+
+})
 
 }
