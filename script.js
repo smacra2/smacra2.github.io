@@ -28,7 +28,7 @@ function startGame() {
 
 	timer = setInterval(updateTimer, 1000)
 
-	enableMotion()
+	enableTilt()
 
 }
 
@@ -118,62 +118,59 @@ function studyMode() {
 
 }
 
-let motionCooldown = false
-let lastMotionTime = 0
+let tiltCooldown = false
+let tiltStartTime = 0
+let lastTiltDirection = null
 
-const MOTION_THRESHOLD = 12
-const CARD_DELAY = 1500
+function enableTilt() {
 
-async function enableMotion() {
-
-	if (typeof DeviceMotionEvent !== "undefined" &&
-		typeof DeviceMotionEvent.requestPermission === "function") {
-
-		try {
-
-			const permission = await DeviceMotionEvent.requestPermission()
-
-			if (permission !== "granted") {
-				return
-			}
-
-		} catch (e) {
-			console.log("Motion permission denied")
-			return
-		}
-
+	if (!window.DeviceOrientationEvent) {
+		return
 	}
 
-	window.addEventListener("devicemotion", handleMotion)
+	window.addEventListener("deviceorientation", handleTilt)
 
 }
 
-function handleMotion(event) {
+function handleTilt(event) {
 
-	if (motionCooldown) {
-		return
-	}
-
-	const acc = event.accelerationIncludingGravity
-
-	if (!acc) {
-		return
-	}
-
-	const y = acc.y
+	const tilt = event.beta
 	const now = Date.now()
 
-	if (now - lastMotionTime < 600) {
+	const DOWN_THRESHOLD = 45
+	const UP_THRESHOLD = -45
+	const HOLD_TIME = 350
+	const CARD_DELAY = 1500
+
+	if (tiltCooldown) {
 		return
 	}
 
-	if (y > MOTION_THRESHOLD) {
+	if (tilt > DOWN_THRESHOLD) {
 
-		triggerCorrect()
+		if (lastTiltDirection !== "down") {
+			tiltStartTime = now
+			lastTiltDirection = "down"
+		}
 
-	} else if (y < -MOTION_THRESHOLD) {
+		if (now - tiltStartTime > HOLD_TIME) {
+			triggerCorrect()
+		}
 
-		triggerPass()
+	} else if (tilt < UP_THRESHOLD) {
+
+		if (lastTiltDirection !== "up") {
+			tiltStartTime = now
+			lastTiltDirection = "up"
+		}
+
+		if (now - tiltStartTime > HOLD_TIME) {
+			triggerPass()
+		}
+
+	} else {
+
+		lastTiltDirection = null
 
 	}
 
@@ -181,42 +178,31 @@ function handleMotion(event) {
 
 function triggerCorrect() {
 
-	motionCooldown = true
-	lastMotionTime = Date.now()
+	tiltCooldown = true
 
-	flash("green")
+	correct(document.getElementById("term").textContent = "✓")
 
 	setTimeout(() => {
-
-		correct()
-		motionCooldown = false
-
-	}, 500)
+		tiltCooldown = false
+	}, 1500)
 
 }
 
 function triggerPass() {
 
-	motionCooldown = true
-	lastMotionTime = Date.now()
+	tiltCooldown = true
 
-	flash("red")
+	pass(document.getElementById("term").textContent = "PASS")
 
 	setTimeout(() => {
-
-		pass()
-		motionCooldown = false
-
-	}, 500)
+		tiltCooldown = false
+	}, 1500)
 
 }
-
 
 function flash(color) {
 
 	document.body.style.background = color
-
-	navigator.vibrate?.(100)
 
 	setTimeout(() => {
 		document.body.style.background = "#0f172a"
