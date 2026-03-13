@@ -270,4 +270,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	document.getElementById("startBtn").addEventListener("click", startGame)
 
 	document.getElementById("studyBtn").addEventListener("click", studyMode)
+
+	document.getElementById("correctBtn").addEventListener("click", correct)
+	
+	document.getElementById("passBtn").addEventListener("click", pass)
 })

@@ -14,50 +14,60 @@ padding:20px;
 
 }
 
-#card{
+#term{
 
-position:fixed;
+font-size: clamp(42px, 10vw, 110px);
 
-top:0;
-left:0;
+font-weight:700;
 
-width:100vw;
-height:100vh;
+letter-spacing:0.02em;
 
-display:flex;
-align-items:center;
-justify-content:center;
+line-height:1.15;
 
 text-align:center;
 
-padding:40px;
+max-width:90%;
 
 }
 
-#term{
+#card{
+position:fixed;
+top:0;
+left:0;
+width:100vw;
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+padding:40px;
+z-index:1;
+}
 
-font-size:8vw;
-font-weight:700;
+#controls{
+position:fixed;
+bottom:80px;
+width:100%;
+display:flex;
+justify-content:center;
+gap:20px;
+z-index:2;
+}
 
-line-height:1.2;
-
+#controls button{
+padding:15px 25px;
+font-size:18px;
+border:none;
+border-radius:10px;
 }
 
 #hud{
-
 position:fixed;
-
 bottom:20px;
-left:0;
-
 width:100%;
-
 display:flex;
 justify-content:space-around;
-
-font-size:18px;
-opacity:0.8;
-
+z-index:2;
 }
 
 button,select{
