@@ -118,25 +118,85 @@ function studyMode() {
 
 }
 
+let tiltCooldown = false
+let tiltStartTime = 0
+let lastTiltDirection = null
+
 function enableTilt() {
 
 	if (!window.DeviceOrientationEvent) {
 		return
 	}
 
-	window.addEventListener("deviceorientation", function(event) {
+	window.addEventListener("deviceorientation", handleTilt)
 
-		const tilt = event.beta
+}
 
-		if (tilt > 60) {
-			correct()
+function handleTilt(event) {
+
+	const tilt = event.beta
+	const now = Date.now()
+
+	const DOWN_THRESHOLD = 65
+	const UP_THRESHOLD = -65
+	const HOLD_TIME = 350
+	const CARD_DELAY = 1500
+
+	if (tiltCooldown) {
+		return
+	}
+
+	if (tilt > DOWN_THRESHOLD) {
+
+		if (lastTiltDirection !== "down") {
+			tiltStartTime = now
+			lastTiltDirection = "down"
 		}
 
-		if (tilt < -60) {
-			pass()
+		if (now - tiltStartTime > HOLD_TIME) {
+			triggerCorrect()
 		}
 
-	})
+	} else if (tilt < UP_THRESHOLD) {
+
+		if (lastTiltDirection !== "up") {
+			tiltStartTime = now
+			lastTiltDirection = "up"
+		}
+
+		if (now - tiltStartTime > HOLD_TIME) {
+			triggerPass()
+		}
+
+	} else {
+
+		lastTiltDirection = null
+
+	}
+
+}
+
+function triggerCorrect() {
+
+	tiltCooldown = true
+
+	correct(document.getElementById("term").textContent = "✓")
+
+	setTimeout(() => {
+		tiltCooldown = false
+	}, 1500)
+
+}
+
+function triggerPass() {
+
+	tiltCooldown = true
+
+	pass(document.getElementById("term").textContent = "PASS")
+
+	setTimeout(() => {
+		tiltCooldown = false
+	}, 1500)
 
 }
 
