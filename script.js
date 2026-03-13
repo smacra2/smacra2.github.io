@@ -118,15 +118,48 @@ function studyMode() {
 
 }
 
+// Tilt engine state
+
+let tiltEnabled = false
 let tiltCooldown = false
+let neutralReady = true
+
+let smoothedTilt = 0
 let tiltStartTime = 0
-let lastTiltDirection = null
+let currentDirection = null
 
-function enableTilt() {
+// Settings (tune if needed)
 
-	if (!window.DeviceOrientationEvent) {
-		return
+const DOWN_THRESHOLD = 65
+const UP_THRESHOLD = -65
+const NEUTRAL_ZONE = 20
+
+const HOLD_TIME = 350
+const CARD_COOLDOWN = 1500
+
+const SMOOTHING = 0.8
+
+async function enableTilt() {
+
+	if (typeof DeviceOrientationEvent !== "undefined" &&
+		typeof DeviceOrientationEvent.requestPermission === "function") {
+
+		try {
+
+			const permission = await DeviceOrientationEvent.requestPermission()
+
+			if (permission !== "granted") {
+				return
+			}
+
+		} catch (e) {
+			console.log("Motion permission denied")
+			return
+		}
+
 	}
+
+	tiltEnabled = true
 
 	window.addEventListener("deviceorientation", handleTilt)
 
@@ -134,43 +167,63 @@ function enableTilt() {
 
 function handleTilt(event) {
 
-	const tilt = event.beta
+	if (!tiltEnabled) return
+	if (tiltCooldown) return
+
+	// Smooth noisy sensor values
+
+	smoothedTilt = SMOOTHING * smoothedTilt + (1 - SMOOTHING) * event.beta
+
+	const tilt = smoothedTilt
 	const now = Date.now()
 
-	const DOWN_THRESHOLD = 45
-	const UP_THRESHOLD = -45
-	const HOLD_TIME = 350
-	const CARD_DELAY = 1500
+	// Reset to neutral zone before next tilt
 
-	if (tiltCooldown) {
+	if (Math.abs(tilt) < NEUTRAL_ZONE) {
+
+		neutralReady = true
+		currentDirection = null
 		return
+
 	}
+
+	if (!neutralReady) return
+
+	// Detect downward tilt (correct)
 
 	if (tilt > DOWN_THRESHOLD) {
 
-		if (lastTiltDirection !== "down") {
+		if (currentDirection !== "down") {
+
 			tiltStartTime = now
-			lastTiltDirection = "down"
+			currentDirection = "down"
+
 		}
 
 		if (now - tiltStartTime > HOLD_TIME) {
+
 			triggerCorrect()
+
 		}
 
-	} else if (tilt < UP_THRESHOLD) {
+	}
 
-		if (lastTiltDirection !== "up") {
+	// Detect upward tilt (pass)
+
+	if (tilt < UP_THRESHOLD) {
+
+		if (currentDirection !== "up") {
+
 			tiltStartTime = now
-			lastTiltDirection = "up"
+			currentDirection = "up"
+
 		}
 
 		if (now - tiltStartTime > HOLD_TIME) {
+
 			triggerPass()
+
 		}
-
-	} else {
-
-		lastTiltDirection = null
 
 	}
 
@@ -179,24 +232,26 @@ function handleTilt(event) {
 function triggerCorrect() {
 
 	tiltCooldown = true
+	neutralReady = false
 
 	correct(document.getElementById("term").textContent = "✓")
 
 	setTimeout(() => {
 		tiltCooldown = false
-	}, 1500)
+	}, CARD_COOLDOWN)
 
 }
 
 function triggerPass() {
 
 	tiltCooldown = true
+	neutralReady = false
 
 	pass(document.getElementById("term").textContent = "PASS")
 
 	setTimeout(() => {
 		tiltCooldown = false
-	}, 1500)
+	}, CARD_COOLDOWN)
 
 }
 
@@ -206,7 +261,7 @@ function flash(color) {
 
 	setTimeout(() => {
 		document.body.style.background = "#0f172a"
-	}, 250)
+	}, 400)
 
 }
 
